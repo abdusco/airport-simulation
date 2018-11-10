@@ -1,16 +1,18 @@
 #include <algorithm>
 #include "ControlPoint.h"
 
+int clamp(int x, int min, int max) {
+    if (x < min) x = min;
+    if (x > max) x = max;
+    return x;
+}
+
 void ControlPoint::occupyWorker() {
-    busyWorkers++;
-    if (busyWorkers > workers) busyWorkers = workers;
-//    busyWorkers = std::max(busyWorkers + 1, workers);
+    busyWorkers = clamp(busyWorkers + 1, 0, workers);
 }
 
 void ControlPoint::releaseWorker() {
-    busyWorkers--;
-//    busyWorkers = std::min(busyWorkers - 1, 0);
-    if (busyWorkers < 0) busyWorkers = 0;
+    busyWorkers = clamp(busyWorkers - 1, 0, workers);
 }
 
 bool ControlPoint::isAvailable() {
@@ -19,7 +21,7 @@ bool ControlPoint::isAvailable() {
 
 ControlPoint::ControlPoint(int workers) : workers(workers) {}
 
-std::ostream &operator<<(std::ostream &os, const ControlPoint &point) {
+std::ostream& operator<<(std::ostream& os, const ControlPoint& point) {
     os << "busyWorkers: " << point.busyWorkers << " workers: " << point.workers;
     return os;
 }
