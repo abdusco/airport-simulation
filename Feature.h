@@ -1,7 +1,6 @@
 #ifndef PROJECT2_FEATURE_H
 #define PROJECT2_FEATURE_H
 
-
 #include <string>
 
 enum Feature {

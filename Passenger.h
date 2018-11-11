@@ -3,6 +3,7 @@
 
 
 #include <ostream>
+#include "EventType.h"
 
 class Event;
 
@@ -23,7 +24,10 @@ public:
     int waitAtSecurity;
     bool isVip;
     bool hasLuggage;
+    bool skippedLuggage = false;
+    bool skippedSecurity = false;
     TimeLog timeLog;
+    std::string id;
 
     Passenger(int timeBeforeEntry,
               int timeBeforeFlight,
@@ -34,13 +38,23 @@ public:
 
     bool missedFlight();
 
-    void logEvent(const Event& event);
+    void log(Event& event);
+
+    void reset();
+
+    void skipLuggage();
+
+    void skipSecurity();
 
     int getWaitedTime();
 
-    std::string getId();
 
     friend std::ostream& operator<<(std::ostream& os, Passenger& passenger);
+
+    bool operator<(const Passenger& rhs) const;
+
+private:
+    std::string makeId();
 };
 
 

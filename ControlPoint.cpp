@@ -9,14 +9,12 @@ int clamp(int x, int min, int max) {
 
 void ControlPoint::occupyWorker() {
     busyWorkers = clamp(busyWorkers + 1, 0, workers);
+    busy = busyWorkers == workers;
 }
 
 void ControlPoint::releaseWorker() {
     busyWorkers = clamp(busyWorkers - 1, 0, workers);
-}
-
-bool ControlPoint::isAvailable() {
-    return busyWorkers < workers;
+    busy = busyWorkers == workers;
 }
 
 ControlPoint::ControlPoint(int workers) : workers(workers) {}

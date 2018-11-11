@@ -59,14 +59,24 @@ int main(int argc, char* argv[]) {
     PassengerList passengers = input.second;
 
     Feature features[] = {
-            FIRST_COME_FIRST_SERVE, // default
+            FIRST_COME_FIRST_SERVE, // CASE 1
+            FIRST_FLY_FIRST_SERVE, // CASE 2
+            VIP_SKIP_SECURITY, // CASE 3
+            FIRST_FLY_FIRST_SERVE | VIP_SKIP_SECURITY, // CASE 4
+            ONLINE_TICKETING, // CASE 5
+            FIRST_FLY_FIRST_SERVE | ONLINE_TICKETING, // CASE 6
+            ONLINE_TICKETING | VIP_SKIP_SECURITY, // CASE 7
+            FIRST_FLY_FIRST_SERVE | VIP_SKIP_SECURITY | ONLINE_TICKETING
     };
 
+    // std::ofstream outfile(argv[2], std::ios::app);
 
     for (const auto& feature : features) {
         airport.setFeatures(feature);
         Report report = airport.run(passengers);
         std::cout << report << std::endl;
+
+        // outfile << report << std::endl;
     }
 
     return 0;

@@ -3,6 +3,183 @@
 #include "Airport.h"
 #include "Feature.h"
 
+Report Airport::run(PassengerList& passengers) {
+    for (auto& passenger : passengers) {
+        passenger.reset();
+        acceptPassenger(passenger);
+    }
+
+    while (!events.empty()) {
+        Event event = events.top();
+        events.pop();
+        clock = event.timestamp;
+        dispatchHandler(event);
+    }
+
+    return prepareReport(passengers);
+}
+
+void Airport::dispatchHandler(Event& event) {
+    Passenger& passenger = *event.passenger;
+    passenger.log(event);
+
+    switch (event.type) {
+        case ENTERED:
+            handleEntry(passenger);
+            break;
+        case PAST_LUGGAGE:
+            handlePastLuggage(passenger);
+            break;
+        case PAST_SECURITY:
+            handlePastSecurity(passenger);
+            break;
+        case DEPARTED:
+            handleDeparture(passenger);
+            break;
+        case EXITED:
+            // handleExit(passenger);
+            break;
+    }
+}
+
+void Airport::acceptPassenger(Passenger& passenger) {
+    return emit(Event(ENTERED,
+                      passenger.tEnter,
+                      &passenger));
+}
+
+
+void Airport::handleEntry(Passenger& passenger) {
+    if (canSkipLuggageControl(passenger)) {
+        passenger.skipLuggage();
+        return emit(Event(PAST_LUGGAGE,
+                          clock,
+                          &passenger));
+    }
+
+    if (luggageControlBusy()) {
+        if (canGoFirst()) {
+            return pLuggageQueue.push(&passenger);
+        }
+        return luggageQueue.push(&passenger);
+    }
+
+    luggageControl.occupyWorker();
+    emit(Event(PAST_LUGGAGE,
+               clock + passenger.waitAtLuggage,
+               &passenger));
+}
+
+void Airport::handlePastLuggage(Passenger& passenger) {
+    if (!passenger.skippedLuggage) {
+        luggageControl.releaseWorker();
+        processLuggageQueue();
+    }
+
+    if (canSkipSecurityControl(passenger)) {
+        passenger.skipSecurity();
+        return emit(Event(PAST_SECURITY,
+                          clock,
+                          &passenger));
+    }
+
+    if (securityControlBusy()) {
+        if (canGoFirst()) {
+            return pSecurityQueue.push(&passenger);
+        }
+        return securityQueue.push(&passenger);
+    }
+
+    securityControl.occupyWorker();
+    emit(Event(PAST_SECURITY,
+               clock + passenger.waitAtSecurity,
+               &passenger));
+}
+
+void Airport::handlePastSecurity(Passenger& passenger) {
+    if (!passenger.skippedSecurity) {
+        securityControl.releaseWorker();
+        processSecurityQueue();
+    }
+
+    emit(Event(DEPARTED,
+               clock,
+               &passenger));
+}
+
+void Airport::handleDeparture(Passenger& passenger) {
+    emit(Event(EXITED,
+               clock,
+               &passenger));
+}
+
+void Airport::handleExit(Passenger& passenger) {
+}
+
+void Airport::processLuggageQueue() {
+    Passenger* passenger = nullptr;
+    if (features & FIRST_COME_FIRST_SERVE) {
+        if (luggageQueue.empty()) return;
+
+        passenger = luggageQueue.front();
+        luggageQueue.pop();
+    } else if (features & FIRST_FLY_FIRST_SERVE) {
+        if (pLuggageQueue.empty()) return;
+
+        passenger = pLuggageQueue.top();
+        pLuggageQueue.pop();
+    }
+
+    luggageControl.occupyWorker();
+    emit(Event(PAST_LUGGAGE,
+               clock + passenger->waitAtLuggage,
+               passenger));
+}
+
+
+void Airport::processSecurityQueue() {
+    Passenger* passenger = nullptr;
+    if (features & FIRST_COME_FIRST_SERVE) {
+        if (securityQueue.empty()) return;
+
+        passenger = securityQueue.front();
+        securityQueue.pop();
+    } else if (features & FIRST_FLY_FIRST_SERVE) {
+        if (pSecurityQueue.empty()) return;
+
+        passenger = pSecurityQueue.top();
+        pSecurityQueue.pop();
+    }
+
+    securityControl.occupyWorker();
+    emit(Event(PAST_SECURITY,
+               clock + passenger->waitAtSecurity,
+               passenger));
+}
+
+bool Airport::luggageControlBusy() {
+    return luggageControl.busy;
+}
+
+
+bool Airport::securityControlBusy() {
+    return securityControl.busy;
+}
+
+inline bool Airport::canSkipLuggageControl(Passenger& passenger) {
+    return (features & ONLINE_TICKETING) && !passenger.hasLuggage;
+}
+
+
+inline bool Airport::canSkipSecurityControl(Passenger& passenger) {
+    return (features & VIP_SKIP_SECURITY) && passenger.isVip;
+}
+
+bool Airport::canGoFirst() {
+    return features & FIRST_FLY_FIRST_SERVE;
+}
+
+
 Airport::Airport(int numSecurity, int numLuggage)
         : luggageControl(ControlPoint(numLuggage)),
           securityControl(ControlPoint(numSecurity)) {
@@ -11,6 +188,9 @@ Airport::Airport(int numSecurity, int numLuggage)
 
 void Airport::setFeatures(Feature features) {
     this->features = features;
+    if (!(features & FIRST_FLY_FIRST_SERVE)) {
+        this->features = features | FIRST_COME_FIRST_SERVE;
+    }
 }
 
 Airport::~Airport() {
@@ -18,119 +198,8 @@ Airport::~Airport() {
     this->securityQueue.empty();
 }
 
-Report Airport::run(PassengerList& passengers) {
-    for (auto& passenger : passengers) {
-        acceptPassenger(passenger);
-    }
-
-    while (!events.empty()) {
-        Event e = events.top();
-        events.pop();
-        clock = e.timestamp;
-
-        Passenger& passenger = *e.passenger;
-        passenger.logEvent(e);
-
-        switch (e.type) {
-            case ENTRY:
-                handleEntry(passenger);
-                break;
-            case LUGGAGE:
-                handleLuggage(passenger);
-                break;
-            case SECURITY:
-                handleSecurity(passenger);
-                break;
-            case DEPARTURE:
-                handleDeparture(passenger);
-                break;
-            case EXIT:
-                handleExit(passenger);
-                break;
-        }
-    }
-
-    return prepareReport(passengers);
-}
-
-void Airport::dispatch(Event event) {
+void Airport::emit(Event event) {
     events.push(event);
-}
-
-void Airport::acceptPassenger(Passenger& passenger) {
-    dispatch(Event(ENTRY,
-                   passenger.tEnter,
-                   &passenger));
-}
-
-void Airport::handleEntry(Passenger& passenger) {
-    if (!luggageReady()) {
-        return luggageQueue.push(&passenger);
-    }
-
-    luggageControl.occupyWorker();
-    dispatch(Event(LUGGAGE,
-                   clock + passenger.waitAtLuggage,
-                   &passenger));
-}
-
-void Airport::handleLuggage(Passenger& passenger) {
-    if (!securityReady()) {
-        return securityQueue.push(&passenger);
-    }
-
-    luggageControl.releaseWorker();
-    securityControl.occupyWorker();
-    dispatch(Event(SECURITY,
-                   clock + passenger.waitAtSecurity,
-                   &passenger));
-}
-
-void Airport::handleSecurity(Passenger& passenger) {
-    moveLuggageQueue();
-
-    securityControl.releaseWorker();
-    dispatch(Event(DEPARTURE,
-                   clock,
-                   &passenger));
-}
-
-void Airport::handleDeparture(Passenger& passenger) {
-    moveSecurityQueue();
-    dispatch(Event(EXIT,
-                   clock,
-                   &passenger));
-}
-
-void Airport::handleExit(Passenger& passenger) {
-}
-
-void Airport::moveLuggageQueue() {
-    if (luggageQueue.empty()) return;
-
-    Passenger* waiting = luggageQueue.front();
-    luggageQueue.pop();
-    dispatch(Event(SECURITY,
-                   clock + waiting->waitAtSecurity,
-                   waiting));
-}
-
-void Airport::moveSecurityQueue() {
-    if (securityQueue.empty()) return;
-
-    Passenger* waiting = securityQueue.front();
-    securityQueue.pop();
-    dispatch(Event(DEPARTURE,
-                   clock,
-                   waiting));
-}
-
-bool Airport::luggageReady() {
-    return luggageQueue.empty() && luggageControl.isAvailable();
-}
-
-bool Airport::securityReady() {
-    return securityQueue.empty() && securityControl.isAvailable();
 }
 
 Report Airport::prepareReport(PassengerList& passengers) {
@@ -144,5 +213,10 @@ Report Airport::prepareReport(PassengerList& passengers) {
 
     double avgWaitingTime = (double) totalWait / (double) passengers.size();
     return {avgWaitingTime, missedFlights};
+}
+
+std::ostream& operator<<(std::ostream& os, const Airport& airport) {
+    os << "luggageControl: " << airport.luggageControl << " securityControl: " << airport.securityControl;
+    return os;
 }
 

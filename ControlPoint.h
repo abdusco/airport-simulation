@@ -1,14 +1,11 @@
 #ifndef PROJECT2_CONTROLPOINT_H
 #define PROJECT2_CONTROLPOINT_H
 
-
 #include <ostream>
 
 class ControlPoint {
 public:
     explicit ControlPoint(int workers);
-
-    bool isAvailable();
 
     void occupyWorker();
 
@@ -18,6 +15,7 @@ public:
 
     int busyWorkers = 0;
     int workers;
+    bool busy = false;
 };
 
 

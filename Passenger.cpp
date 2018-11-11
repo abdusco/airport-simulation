@@ -16,23 +16,24 @@ Passenger::Passenger(int timeBeforeEntry,
     this->waitAtSecurity = waitAtSecurity;
     this->isVip = isVip;
     this->hasLuggage = hasLuggage;
+    this->id = makeId();
 }
 
-void Passenger::logEvent(const Event& event) {
+void Passenger::log(Event& event) {
     switch (event.type) {
-        case ENTRY:
+        case ENTERED:
             timeLog.enter = event.timestamp;
             break;
-        case LUGGAGE:
+        case PAST_LUGGAGE:
             timeLog.luggage = event.timestamp;
             break;
-        case SECURITY:
+        case PAST_SECURITY:
             timeLog.security = event.timestamp;
             break;
-        case DEPARTURE:
+        case DEPARTED:
             timeLog.depart = event.timestamp;
             break;
-        case EXIT:
+        case EXITED:
             timeLog.exit = event.timestamp;
             break;
     }
@@ -46,22 +47,44 @@ int Passenger::getWaitedTime() {
     return timeLog.exit - timeLog.enter;
 }
 
-std::string Passenger::getId() {
+std::string Passenger::makeId() {
     std::ostringstream ss;
-    ss << "" << tEnter
-       << "" << timeFlight
-       << "" << waitAtLuggage
-       << "" << waitAtSecurity
-       << "" << hasLuggage
-       << "" << isVip;
+    ss << tEnter
+       << "." << timeFlight
+       << "." << waitAtLuggage
+       << "." << waitAtSecurity
+       << "." << hasLuggage
+       << "." << isVip;
     return ss.str();
 }
 
 std::ostream& operator<<(std::ostream& os, Passenger& passenger) {
-    os << "actualD: " << passenger.timeLog.depart
-       << " timeD: " << passenger.timeFlight
+    os << "id: " << passenger.makeId()
        << " missed: " << passenger.missedFlight();
     return os;
 }
+
+
+void Passenger::reset() {
+    skippedLuggage = false;
+    skippedSecurity = false;
+    this->timeLog = TimeLog();
+}
+
+void Passenger::skipLuggage() {
+    this->skippedLuggage = true;
+}
+
+void Passenger::skipSecurity() {
+    this->skippedSecurity = true;
+}
+
+bool Passenger::operator<(const Passenger& other) const {
+    if (other.timeFlight == this->timeFlight) {
+        return other.tEnter < this->tEnter;
+    }
+    return other.timeFlight < this->timeFlight;
+}
+
 
 
