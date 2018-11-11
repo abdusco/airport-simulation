@@ -69,14 +69,14 @@ int main(int argc, char* argv[]) {
             FIRST_FLY_FIRST_SERVE | VIP_SKIP_SECURITY | ONLINE_TICKETING
     };
 
-    // std::ofstream outfile(argv[2], std::ios::app);
+     std::ofstream outfile(argv[2], std::ios::app);
 
     for (const auto& feature : features) {
         airport.setFeatures(feature);
         Report report = airport.run(passengers);
         std::cout << report << std::endl;
 
-        // outfile << report << std::endl;
+         outfile << report << std::endl;
     }
 
     return 0;
