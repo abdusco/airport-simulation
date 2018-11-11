@@ -5,11 +5,11 @@
 #include <queue>
 #include <ostream>
 
-#include "Feature.h"
-#include "Passenger.h"
-#include "ControlPoint.h"
-#include "Event.h"
-#include "Report.h"
+#include "models/Feature.h"
+#include "models/Passenger.h"
+#include "models/ControlPoint.h"
+#include "models/Event.h"
+#include "models/Report.h"
 
 typedef std::vector<Passenger> PassengerList;
 

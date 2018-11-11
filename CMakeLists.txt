@@ -7,12 +7,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 set(SOURCE_FILES
         main.cpp
-        Event.cpp Event.h
-        EventType.cpp EventType.h
-        Passenger.cpp Passenger.h
+        models/Event.cpp models/Event.h
+        models/EventType.cpp models/EventType.h
+        models/Passenger.cpp models/Passenger.h
         Airport.cpp Airport.h
-        Feature.h
-        ControlPoint.cpp ControlPoint.h
-        Report.cpp Report.h)
+        models/Feature.h
+        models/ControlPoint.cpp models/ControlPoint.h
+        models/Report.cpp models/Report.h)
 
 add_executable(project2 ${SOURCE_FILES})

@@ -1,7 +1,7 @@
 #include <iostream>
 
 #include "Airport.h"
-#include "Feature.h"
+#include "models/Feature.h"
 
 Report Airport::run(PassengerList& passengers) {
     for (auto& passenger : passengers) {

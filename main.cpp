@@ -4,8 +4,8 @@
 #include <sstream>
 
 #include "Airport.h"
-#include "Passenger.h"
-#include "Feature.h"
+#include "models/Passenger.h"
+#include "models/Feature.h"
 
 typedef std::pair<Airport, std::vector<Passenger>> ParsedInput;
 
