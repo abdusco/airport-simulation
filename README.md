@@ -15,8 +15,8 @@ A passenger goes through following steps before he gets on the plane:
 1. Enter the airport 
 2. Go to the luggage area.  
   If all counters are busy, get in the queue, and wait until luggage has been cleared.
-3. Moves along to the security area.  
-  If all counters are busy, wait in the line until checked out.
+3. Move along to the security area.  
+  If all counters are busy, wait in the line until cleared.
 4. Go to departure area and get on the plane.
 
 Originally all queues are FIFO (first in first out) based, and but as more and more passengers prefer this airport
