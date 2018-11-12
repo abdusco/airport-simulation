@@ -58,24 +58,37 @@ private:
 
     Report prepareReport(PassengerList& passengers);
 
-    inline bool canSkipLuggageControl(Passenger& passenger);
+    bool canSkipLuggageControl(Passenger& passenger) {
+        return (features & ONLINE_TICKETING) && !passenger.hasLuggage;
+    }
 
-    inline bool canSkipSecurityControl(Passenger& passenger);
+    bool canSkipSecurityControl(Passenger& passenger) {
+        return (features & VIP_SKIP_SECURITY) && passenger.isVip;
+    }
 
-    inline bool canCutInLine();
+    bool canCutInLine() {
+        return features & FIRST_FLY_FIRST_SERVE;
+    }
 
-    inline void pushSecurityQueue(Passenger& passenger);
+    void pushSecurityQueue(Passenger& passenger);
 
-    inline void pushLuggageQueue(Passenger& passenger);
+    void pushLuggageQueue(Passenger& passenger);
 
 public:
-    Airport(int securityCounters, int luggageCounters);
+    Airport(int securityCounters, int luggageCounters)
+            : luggageControl(ControlPoint(luggageCounters)),
+              securityControl(ControlPoint(securityCounters)) {
+        this->features = FIRST_COME_FIRST_SERVE;
+    }
 
-    void setFeatures(Feature features);
+    void setFeatures(Feature features) {
+        this->features = features;
+        if (!(features & FIRST_FLY_FIRST_SERVE)) {
+            this->features = features | FIRST_COME_FIRST_SERVE;
+        }
+    }
 
     Report run(PassengerList& passengers);
-
-    ~Airport();
 
     friend std::ostream& operator<<(std::ostream& os, const Airport& airport);
 };

@@ -176,36 +176,6 @@ void Airport::pushSecurityQueue(Passenger& passenger) {
     return securityQueue.push(&passenger);
 }
 
-inline bool Airport::canSkipLuggageControl(Passenger& passenger) {
-    return (features & ONLINE_TICKETING) && !passenger.hasLuggage;
-}
-
-inline bool Airport::canSkipSecurityControl(Passenger& passenger) {
-    return (features & VIP_SKIP_SECURITY) && passenger.isVip;
-}
-
-bool Airport::canCutInLine() {
-    return features & FIRST_FLY_FIRST_SERVE;
-}
-
-Airport::Airport(int numSecurity, int numLuggage)
-        : luggageControl(ControlPoint(numLuggage)),
-          securityControl(ControlPoint(numSecurity)) {
-    this->features = FIRST_COME_FIRST_SERVE;
-}
-
-void Airport::setFeatures(Feature features) {
-    this->features = features;
-    if (!(features & FIRST_FLY_FIRST_SERVE)) {
-        this->features = features | FIRST_COME_FIRST_SERVE;
-    }
-}
-
-Airport::~Airport() {
-    this->luggageQueue.empty();
-    this->securityQueue.empty();
-}
-
 void Airport::emit(Event event) {
     events.push(event);
 }
