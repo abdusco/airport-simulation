@@ -25,18 +25,18 @@ ParsedInput parseInput(const std::string& filename) {
     // remaining lines are passenger details
     PassengerList passengers;
     while (std::getline(infile, line) && numPassenger--) {
-        unsigned long timeEntry, timeFlight, waitLuggage, waitSecurity;
+        unsigned long tEntry, tFlight, waitLuggage, waitSecurity;
         bool isVip, hasLuggage;
         char vip, luggage;
 
         std::istringstream ss(line);
-        ss >> timeEntry >> timeFlight >> waitLuggage >> waitSecurity >> vip >> luggage;
+        ss >> tEntry >> tFlight >> waitLuggage >> waitSecurity >> vip >> luggage;
         isVip = vip == 'V';
         hasLuggage = luggage == 'L';
 
         passengers.push_back(Passenger(
-                timeEntry,
-                timeFlight,
+                tEntry,
+                tFlight,
                 waitLuggage,
                 waitSecurity,
                 isVip,

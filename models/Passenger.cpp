@@ -4,20 +4,18 @@
 #include "Passenger.h"
 #include "Event.h"
 
-Passenger::Passenger(unsigned long timeBeforeEntry,
-                     unsigned long timeBeforeFlight,
+Passenger::Passenger(unsigned long tEntry,
+                     unsigned long tFlight,
                      unsigned long waitAtLuggage,
                      unsigned long waitAtSecurity,
                      bool isVip,
-                     bool hasLuggage) {
-    this->tEnter = timeBeforeEntry;
-    this->timeFlight = timeBeforeFlight;
-    this->waitAtLuggage = waitAtLuggage;
-    this->waitAtSecurity = waitAtSecurity;
-    this->isVip = isVip;
-    this->hasLuggage = hasLuggage;
-    this->id = makeId();
-}
+                     bool hasLuggage)
+        : tEnter(tEntry),
+          tFlight(tFlight),
+          waitAtLuggage(waitAtLuggage),
+          waitAtSecurity(waitAtSecurity),
+          isVip(isVip),
+          hasLuggage(hasLuggage) {}
 
 void Passenger::log(Event& event) {
     switch (event.type) {
@@ -40,7 +38,7 @@ void Passenger::log(Event& event) {
 }
 
 bool Passenger::missedFlight() {
-    return timeFlight < timeLog.depart;
+    return tFlight < timeLog.depart;
 }
 
 unsigned long Passenger::getWaitedTime() {
@@ -50,7 +48,7 @@ unsigned long Passenger::getWaitedTime() {
 std::string Passenger::makeId() {
     std::ostringstream ss;
     ss << tEnter
-       << "." << timeFlight
+       << "." << tFlight
        << "." << waitAtLuggage
        << "." << waitAtSecurity
        << "." << hasLuggage
@@ -80,10 +78,10 @@ void Passenger::skipSecurity() {
 }
 
 bool Passenger::operator<(const Passenger& other) const {
-    if (other.timeFlight == this->timeFlight) {
+    if (other.tFlight == this->tFlight) {
         return other.tEnter < this->tEnter;
     }
-    return other.timeFlight < this->timeFlight;
+    return other.tFlight < this->tFlight;
 }
 
 

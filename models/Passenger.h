@@ -18,19 +18,19 @@ struct TimeLog {
 class Passenger {
 private:
 public:
-    unsigned long tEnter;
-    unsigned long timeFlight;
-    unsigned long waitAtLuggage;
-    unsigned long waitAtSecurity;
-    bool isVip;
-    bool hasLuggage;
+    const unsigned long tEnter;
+    const unsigned long tFlight;
+    const unsigned long waitAtLuggage;
+    const unsigned long waitAtSecurity;
+    const bool isVip;
+    const bool hasLuggage;
     bool skippedLuggage = false;
     bool skippedSecurity = false;
     TimeLog timeLog;
     std::string id;
 
-    Passenger(unsigned long timeBeforeEntry,
-              unsigned long timeBeforeFlight,
+    Passenger(unsigned long tEntry,
+              unsigned long tFlight,
               unsigned long waitAtLuggage,
               unsigned long waitAtSecurity,
               bool isVip,
