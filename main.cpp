@@ -48,26 +48,36 @@ ParsedInput parseInput(const std::string& filename) {
 }
 
 int main(int argc, char* argv[]) {
-    if (argc != 3) {
-        std::cout << "Syntax: ./project2 <input_file> <output_file>" << std::endl;
+    if (argc < 3) {
+        std::cout << "Syntax: ./project2 <input_file> <output_file> [verbose]" << std::endl;
+        std::cout << "(add any character to the end to output results to the console)" << std::endl;
         return 1;
     }
+    bool verbose = argc > 3;
+
+    Feature features[] = {
+            // TEST CASE 1
+            FIRST_COME_FIRST_SERVE,
+            // TEST CASE 2
+            FIRST_FLY_FIRST_SERVE,
+            // TEST CASE 3
+            VIP_SKIP_SECURITY,
+            // TEST CASE 4
+            FIRST_FLY_FIRST_SERVE | VIP_SKIP_SECURITY,
+            // TEST CASE 5
+            ONLINE_TICKETING,
+            // TEST CASE 6
+            FIRST_FLY_FIRST_SERVE | ONLINE_TICKETING,
+            // TEST CASE 7
+            ONLINE_TICKETING | VIP_SKIP_SECURITY,
+            // TEST CASE 8
+            FIRST_FLY_FIRST_SERVE | VIP_SKIP_SECURITY | ONLINE_TICKETING
+    };
 
     ParsedInput input = parseInput(argv[1]);
 
     Airport airport = input.first;
     PassengerList passengers = input.second;
-
-    Feature features[] = {
-            FIRST_COME_FIRST_SERVE, // CASE 1
-            FIRST_FLY_FIRST_SERVE, // CASE 2
-            VIP_SKIP_SECURITY, // CASE 3
-            FIRST_FLY_FIRST_SERVE | VIP_SKIP_SECURITY, // CASE 4
-            ONLINE_TICKETING, // CASE 5
-            FIRST_FLY_FIRST_SERVE | ONLINE_TICKETING, // CASE 6
-            ONLINE_TICKETING | VIP_SKIP_SECURITY, // CASE 7
-            FIRST_FLY_FIRST_SERVE | VIP_SKIP_SECURITY | ONLINE_TICKETING
-    };
 
     std::ofstream outfile(argv[2], std::ios::app);
 
@@ -76,6 +86,7 @@ int main(int argc, char* argv[]) {
         Report report = airport.run(passengers);
 
         outfile << report << std::endl;
+        if (verbose) std::cout << report << std::endl;
     }
 
     return 0;
