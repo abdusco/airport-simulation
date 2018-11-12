@@ -51,6 +51,38 @@ There are 8 test cases to check the effectiveness of all combination of 3 differ
 |   x   |   x   |    x   |       |
 
 
+## Input
+Syntax is as follows:
+```text
+<NUM_PASSENGERS> <NUM_LUGGAGE_COUNTERS> <NUM_SECURITY_COUNTERS>
+<T_ENTER> <T_FLIGHT> <T_WAIT_LUGGAGE> <T_WAIT_SECURITY> <IS_VIP> <HAS_LUGGAGE>
+<T_ENTER> <T_FLIGHT> <T_WAIT_LUGGAGE> <T_WAIT_SECURITY> <IS_VIP> <HAS_LUGGAGE>
+...
+...
+```
+where:
++ `IS_VIP` = `{V, N}` to denote VIP status.
++ `HAS_LUGGAGE` = `{L, N}` to denote presence of luggage.
++ All remaining parameters are integers.
+
+An example is included in `inputSample.txt`
+
+## Output
+The simulation results for each test case is written to report file, 
+also output to the console if verbose flag is set. 
+
+Each line is `<AVG_WAIT_TIME> <MISSED_FLIGHTS>`
+```text
+7.625 3
+7.375 3
+6.250 1
+6.125 0
+5.750 2
+5.500 1
+4.500 1
+4.500 1
+```
+
 ## Build
 ```bash
 $ make clean
@@ -60,5 +92,5 @@ $ make
 
 ## Usage
 ```bash
-$ ./project2 input.txt report.txt
+$ ./project2 <input.txt> <report.txt> [verbose]
 ```
