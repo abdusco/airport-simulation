@@ -4,10 +4,10 @@
 #include <ostream>
 
 class ControlPoint {
-    int busyWorkers = 0;
-    int workers;
+    unsigned long busyWorkers = 0;
+    unsigned long workers;
 public:
-    explicit ControlPoint(int workers);
+    explicit ControlPoint(unsigned long workers);
 
     void occupyWorker();
 

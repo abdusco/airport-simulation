@@ -2,7 +2,7 @@
 #include "Passenger.h"
 
 
-Event::Event(EventType type, int timestamp, Passenger* passenger) {
+Event::Event(EventType type, unsigned long timestamp, Passenger* passenger) {
     this->type = type;
     this->timestamp = timestamp;
     this->passenger = passenger;

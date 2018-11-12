@@ -181,15 +181,15 @@ void Airport::emit(Event event) {
 }
 
 Report Airport::prepareReport(PassengerList& passengers) {
-    int totalWait = 0;
-    int missedFlights = 0;
+    unsigned long totalWait = 0;
+    unsigned long missedFlights = 0;
 
     for (auto& passenger : passengers) {
         totalWait += passenger.getWaitedTime();
         if (passenger.missedFlight()) missedFlights++;
     }
 
-    double avgWaitingTime = (double) totalWait / (double) passengers.size();
+    long double avgWaitingTime = (long double) totalWait / (long double) passengers.size();
     return {avgWaitingTime, missedFlights};
 }
 

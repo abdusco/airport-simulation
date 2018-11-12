@@ -1,9 +1,9 @@
 #include <algorithm>
 #include "ControlPoint.h"
 
-ControlPoint::ControlPoint(int workers) : workers(workers) {}
+ControlPoint::ControlPoint(unsigned long workers) : workers(workers) {}
 
-int clamp(int x, int min, int max) {
+unsigned long clamp(unsigned long x, unsigned long min, unsigned long max) {
     if (x < min) x = min;
     if (x > max) x = max;
     return x;

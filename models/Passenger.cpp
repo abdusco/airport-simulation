@@ -4,10 +4,10 @@
 #include "Passenger.h"
 #include "Event.h"
 
-Passenger::Passenger(int timeBeforeEntry,
-                     int timeBeforeFlight,
-                     int waitAtLuggage,
-                     int waitAtSecurity,
+Passenger::Passenger(unsigned long timeBeforeEntry,
+                     unsigned long timeBeforeFlight,
+                     unsigned long waitAtLuggage,
+                     unsigned long waitAtSecurity,
                      bool isVip,
                      bool hasLuggage) {
     this->tEnter = timeBeforeEntry;
@@ -43,7 +43,7 @@ bool Passenger::missedFlight() {
     return timeFlight < timeLog.depart;
 }
 
-int Passenger::getWaitedTime() {
+unsigned long Passenger::getWaitedTime() {
     return timeLog.exit - timeLog.enter;
 }
 

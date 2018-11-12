@@ -2,13 +2,13 @@
 #include <iomanip>
 #include "Report.h"
 
-double truncate(double num, int digits = 3) {
+long double truncate(long double num, int digits = 3) {
     int factor = 10;
     while (--digits) factor *= 10;
-    return (double) ((int) (num * factor)) / factor;
+    return (long double) ((long double) (num * factor)) / factor;
 }
 
-Report::Report(double avgWaitingTime, int missedFlights)
+Report::Report(long double avgWaitingTime, unsigned long missedFlights)
         : avgWaitingTime(avgWaitingTime),
           missedFlights(missedFlights) {}
 

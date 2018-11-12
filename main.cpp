@@ -13,7 +13,7 @@ ParsedInput parseInput(const std::string& filename) {
     std::ifstream infile(filename);
 
     // Read the first line for airport parameters
-    int numPassenger, numLuggage, numSecurity;
+    unsigned long numPassenger, numLuggage, numSecurity;
 
     std::string line;
     getline(infile, line);
@@ -25,7 +25,7 @@ ParsedInput parseInput(const std::string& filename) {
     // remaining lines are passenger details
     PassengerList passengers;
     while (std::getline(infile, line) && numPassenger--) {
-        int timeEntry, timeFlight, waitLuggage, waitSecurity;
+        unsigned long timeEntry, timeFlight, waitLuggage, waitSecurity;
         bool isVip, hasLuggage;
         char vip, luggage;
 

@@ -8,20 +8,20 @@
 class Event;
 
 struct TimeLog {
-    int enter = 0;
-    int luggage = 0;
-    int security = 0;
-    int depart = 0;
-    int exit = 0;
+    unsigned long enter = 0;
+    unsigned long luggage = 0;
+    unsigned long security = 0;
+    unsigned long depart = 0;
+    unsigned long exit = 0;
 };
 
 class Passenger {
 private:
 public:
-    int tEnter;
-    int timeFlight;
-    int waitAtLuggage;
-    int waitAtSecurity;
+    unsigned long tEnter;
+    unsigned long timeFlight;
+    unsigned long waitAtLuggage;
+    unsigned long waitAtSecurity;
     bool isVip;
     bool hasLuggage;
     bool skippedLuggage = false;
@@ -29,10 +29,10 @@ public:
     TimeLog timeLog;
     std::string id;
 
-    Passenger(int timeBeforeEntry,
-              int timeBeforeFlight,
-              int waitAtLuggage,
-              int waitAtSecurity,
+    Passenger(unsigned long timeBeforeEntry,
+              unsigned long timeBeforeFlight,
+              unsigned long waitAtLuggage,
+              unsigned long waitAtSecurity,
               bool isVip,
               bool hasLuggage);
 
@@ -46,7 +46,7 @@ public:
 
     void skipSecurity();
 
-    int getWaitedTime();
+    unsigned long getWaitedTime();
 
 
     friend std::ostream& operator<<(std::ostream& os, Passenger& passenger);

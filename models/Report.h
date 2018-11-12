@@ -5,10 +5,10 @@
 #include <ostream>
 
 class Report {
-    double avgWaitingTime = 0;
-    int missedFlights = 0;
+    long double avgWaitingTime = 0;
+    unsigned long missedFlights = 0;
 public:
-    Report(double avgWaitingTime, int missedFlights);
+    Report(long double avgWaitingTime, unsigned long missedFlights);
 
     friend std::ostream& operator<<(std::ostream& os, const Report& report);
 };

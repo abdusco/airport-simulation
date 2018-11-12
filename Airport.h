@@ -22,7 +22,7 @@ struct PassengerLessImportant {
 
 class Airport {
 private:
-    int clock = 0;
+    unsigned long clock = 0;
     Feature features;
     std::priority_queue<Event> events;
     std::queue<Passenger*> luggageQueue;
@@ -75,7 +75,7 @@ private:
     void pushLuggageQueue(Passenger& passenger);
 
 public:
-    Airport(int securityCounters, int luggageCounters)
+    Airport(unsigned long securityCounters, unsigned long luggageCounters)
             : luggageControl(ControlPoint(luggageCounters)),
               securityControl(ControlPoint(securityCounters)) {
         this->features = FIRST_COME_FIRST_SERVE;

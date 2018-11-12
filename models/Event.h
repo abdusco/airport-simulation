@@ -9,10 +9,10 @@ class Passenger;
 class Event {
 public:
     EventType type;
-    int timestamp;
+    unsigned long timestamp;
     Passenger* passenger;
 
-    Event(EventType type, int timestamp, Passenger* passenger);
+    Event(EventType type, unsigned long timestamp, Passenger* passenger);
 
     friend std::ostream& operator<<(std::ostream& os, const Event& event);
 
