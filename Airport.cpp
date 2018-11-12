@@ -25,7 +25,7 @@ void Airport::dispatchHandler(Event& event) {
 
     switch (event.type) {
         case ENTERED:
-            handleEntry(passenger);
+            handleEntered(passenger);
             break;
         case PAST_LUGGAGE:
             handlePastLuggage(passenger);
@@ -48,7 +48,7 @@ void Airport::acceptPassenger(Passenger& passenger) {
                       &passenger));
 }
 
-void Airport::handleEntry(Passenger& passenger) {
+void Airport::handleEntered(Passenger& passenger) {
     if (canSkipLuggageControl(passenger)) {
         passenger.skipLuggageControl();
         return emit(Event(PAST_LUGGAGE,
@@ -195,7 +195,8 @@ Report Airport::prepareReport(PassengerList& passengers) {
 }
 
 std::ostream& operator<<(std::ostream& os, const Airport& airport) {
-    os << "luggageControl: " << airport.luggageControl << " securityControl: " << airport.securityControl;
+    os << "luggageControl: " << airport.luggageControl
+       << " securityControl: " << airport.securityControl;
     return os;
 }
 

@@ -55,22 +55,14 @@ int main(int argc, char* argv[]) {
     }
     bool verbose = argc > 3;
 
-    Feature features[] = {
-            // TEST CASE 1
+    Feature testCases[] = {
             FIRST_COME_FIRST_SERVE,
-            // TEST CASE 2
             FIRST_FLY_FIRST_SERVE,
-            // TEST CASE 3
             VIP_SKIP_SECURITY,
-            // TEST CASE 4
             FIRST_FLY_FIRST_SERVE | VIP_SKIP_SECURITY,
-            // TEST CASE 5
             ONLINE_TICKETING,
-            // TEST CASE 6
             FIRST_FLY_FIRST_SERVE | ONLINE_TICKETING,
-            // TEST CASE 7
             ONLINE_TICKETING | VIP_SKIP_SECURITY,
-            // TEST CASE 8
             FIRST_FLY_FIRST_SERVE | VIP_SKIP_SECURITY | ONLINE_TICKETING
     };
 
@@ -81,8 +73,8 @@ int main(int argc, char* argv[]) {
 
     std::ofstream outfile(argv[2], std::ios::app);
 
-    for (const auto& feature : features) {
-        airport.setFeatures(feature);
+    for (const auto& caseFeatures : testCases) {
+        airport.setFeatures(caseFeatures);
         Report report = airport.run(passengers);
 
         outfile << report << std::endl;

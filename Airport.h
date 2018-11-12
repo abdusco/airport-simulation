@@ -38,7 +38,7 @@ private:
 
     void acceptPassenger(Passenger& passenger);
 
-    void handleEntry(Passenger& passenger);
+    void handleEntered(Passenger& passenger);
 
     void handlePastLuggage(Passenger& passenger);
 
