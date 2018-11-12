@@ -52,13 +52,21 @@ private:
 
     void processLuggageQueue();
 
+    Passenger* popLuggageQueue();
+
+    Passenger* popSecurityQueue();
+
     Report prepareReport(PassengerList& passengers);
 
     inline bool canSkipLuggageControl(Passenger& passenger);
 
     inline bool canSkipSecurityControl(Passenger& passenger);
 
-    inline bool canGoFirst();
+    inline bool canCutInLine();
+
+    inline void pushSecurityQueue(Passenger& passenger);
+
+    inline void pushLuggageQueue(Passenger& passenger);
 
 public:
     Airport(int securityCounters, int luggageCounters);

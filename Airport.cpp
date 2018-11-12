@@ -48,7 +48,6 @@ void Airport::acceptPassenger(Passenger& passenger) {
                       &passenger));
 }
 
-
 void Airport::handleEntry(Passenger& passenger) {
     if (canSkipLuggageControl(passenger)) {
         passenger.skipLuggage();
@@ -58,10 +57,7 @@ void Airport::handleEntry(Passenger& passenger) {
     }
 
     if (luggageControl.isBusy()) {
-        if (canGoFirst()) {
-            return pLuggageQueue.push(&passenger);
-        }
-        return luggageQueue.push(&passenger);
+        return pushLuggageQueue(passenger);
     }
 
     luggageControl.occupyWorker();
@@ -84,10 +80,7 @@ void Airport::handlePastLuggage(Passenger& passenger) {
     }
 
     if (securityControl.isBusy()) {
-        if (canGoFirst()) {
-            return pSecurityQueue.push(&passenger);
-        }
-        return securityQueue.push(&passenger);
+        return pushSecurityQueue(passenger);
     }
 
     securityControl.occupyWorker();
@@ -117,18 +110,8 @@ void Airport::handleExit(Passenger& passenger) {
 }
 
 void Airport::processLuggageQueue() {
-    Passenger* passenger = nullptr;
-    if (features & FIRST_COME_FIRST_SERVE) {
-        if (luggageQueue.empty()) return;
-
-        passenger = luggageQueue.front();
-        luggageQueue.pop();
-    } else if (features & FIRST_FLY_FIRST_SERVE) {
-        if (pLuggageQueue.empty()) return;
-
-        passenger = pLuggageQueue.top();
-        pLuggageQueue.pop();
-    }
+    Passenger* passenger = popLuggageQueue();
+    if (passenger == nullptr) return;
 
     luggageControl.occupyWorker();
     emit(Event(PAST_LUGGAGE,
@@ -136,20 +119,9 @@ void Airport::processLuggageQueue() {
                passenger));
 }
 
-
 void Airport::processSecurityQueue() {
-    Passenger* passenger = nullptr;
-    if (features & FIRST_COME_FIRST_SERVE) {
-        if (securityQueue.empty()) return;
-
-        passenger = securityQueue.front();
-        securityQueue.pop();
-    } else if (features & FIRST_FLY_FIRST_SERVE) {
-        if (pSecurityQueue.empty()) return;
-
-        passenger = pSecurityQueue.top();
-        pSecurityQueue.pop();
-    }
+    Passenger* passenger = popSecurityQueue();
+    if (passenger == nullptr) return;
 
     securityControl.occupyWorker();
     emit(Event(PAST_SECURITY,
@@ -157,19 +129,64 @@ void Airport::processSecurityQueue() {
                passenger));
 }
 
+Passenger* Airport::popLuggageQueue() {
+    if (features & FIRST_FLY_FIRST_SERVE) {
+        if (pLuggageQueue.empty()) return nullptr;
+
+        Passenger* p = pLuggageQueue.top();
+        pLuggageQueue.pop();
+        return p;
+    }
+    // first come firsts serve
+    if (luggageQueue.empty()) return nullptr;
+
+    Passenger* p = luggageQueue.front();
+    luggageQueue.pop();
+    return p;
+}
+
+Passenger* Airport::popSecurityQueue() {
+    if (features & FIRST_FLY_FIRST_SERVE) {
+        if (pSecurityQueue.empty()) return nullptr;
+
+        Passenger* p = pSecurityQueue.top();
+        pSecurityQueue.pop();
+        return p;
+    }
+
+    // first come first serve
+    if (securityQueue.empty()) return nullptr;
+
+    Passenger* p = securityQueue.front();
+    securityQueue.pop();
+    return p;
+}
+
+void Airport::pushLuggageQueue(Passenger& passenger) {
+    if (canCutInLine()) {
+        return pLuggageQueue.push(&passenger);
+    }
+    return luggageQueue.push(&passenger);
+}
+
+void Airport::pushSecurityQueue(Passenger& passenger) {
+    if (canCutInLine()) {
+        return pSecurityQueue.push(&passenger);
+    }
+    return securityQueue.push(&passenger);
+}
+
 inline bool Airport::canSkipLuggageControl(Passenger& passenger) {
     return (features & ONLINE_TICKETING) && !passenger.hasLuggage;
 }
-
 
 inline bool Airport::canSkipSecurityControl(Passenger& passenger) {
     return (features & VIP_SKIP_SECURITY) && passenger.isVip;
 }
 
-bool Airport::canGoFirst() {
+bool Airport::canCutInLine() {
     return features & FIRST_FLY_FIRST_SERVE;
 }
-
 
 Airport::Airport(int numSecurity, int numLuggage)
         : luggageControl(ControlPoint(numLuggage)),
