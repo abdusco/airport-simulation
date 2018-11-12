@@ -4,6 +4,8 @@
 #include <ostream>
 
 class ControlPoint {
+    int busyWorkers = 0;
+    int workers;
 public:
     explicit ControlPoint(int workers);
 
@@ -11,12 +13,9 @@ public:
 
     void releaseWorker();
 
+    bool isBusy() const;
+
     friend std::ostream& operator<<(std::ostream& os, const ControlPoint& point);
-
-    int busyWorkers = 0;
-    int workers;
-    bool busy = false;
 };
-
 
 #endif //PROJECT2_CONTROLPOINT_H

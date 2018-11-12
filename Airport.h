@@ -54,10 +54,6 @@ private:
 
     Report prepareReport(PassengerList& passengers);
 
-    inline bool securityControlBusy();
-
-    inline bool luggageControlBusy();
-
     inline bool canSkipLuggageControl(Passenger& passenger);
 
     inline bool canSkipSecurityControl(Passenger& passenger);

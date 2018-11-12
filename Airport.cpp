@@ -57,7 +57,7 @@ void Airport::handleEntry(Passenger& passenger) {
                           &passenger));
     }
 
-    if (luggageControlBusy()) {
+    if (luggageControl.isBusy()) {
         if (canGoFirst()) {
             return pLuggageQueue.push(&passenger);
         }
@@ -83,7 +83,7 @@ void Airport::handlePastLuggage(Passenger& passenger) {
                           &passenger));
     }
 
-    if (securityControlBusy()) {
+    if (securityControl.isBusy()) {
         if (canGoFirst()) {
             return pSecurityQueue.push(&passenger);
         }
@@ -155,15 +155,6 @@ void Airport::processSecurityQueue() {
     emit(Event(PAST_SECURITY,
                clock + passenger->waitAtSecurity,
                passenger));
-}
-
-bool Airport::luggageControlBusy() {
-    return luggageControl.busy;
-}
-
-
-bool Airport::securityControlBusy() {
-    return securityControl.busy;
 }
 
 inline bool Airport::canSkipLuggageControl(Passenger& passenger) {
