@@ -37,7 +37,7 @@ void Airport::dispatchHandler(Event& event) {
             handleDeparture(passenger);
             break;
         case EXITED:
-            // handleExit(passenger);
+            // handleExited(passenger);
             break;
     }
 }
@@ -50,7 +50,7 @@ void Airport::acceptPassenger(Passenger& passenger) {
 
 void Airport::handleEntry(Passenger& passenger) {
     if (canSkipLuggageControl(passenger)) {
-        passenger.skipLuggage();
+        passenger.skipLuggageControl();
         return emit(Event(PAST_LUGGAGE,
                           clock,
                           &passenger));
@@ -73,7 +73,7 @@ void Airport::handlePastLuggage(Passenger& passenger) {
     }
 
     if (canSkipSecurityControl(passenger)) {
-        passenger.skipSecurity();
+        passenger.skipSecurityControl();
         return emit(Event(PAST_SECURITY,
                           clock,
                           &passenger));
@@ -106,7 +106,7 @@ void Airport::handleDeparture(Passenger& passenger) {
                &passenger));
 }
 
-void Airport::handleExit(Passenger& passenger) {
+void Airport::handleExited(Passenger& passenger) {
 }
 
 void Airport::processLuggageQueue() {
@@ -130,14 +130,15 @@ void Airport::processSecurityQueue() {
 }
 
 Passenger* Airport::popLuggageQueue() {
-    if (features & FIRST_FLY_FIRST_SERVE) {
+    // first fly first serve
+    if (canCutInLine()) {
         if (pLuggageQueue.empty()) return nullptr;
 
         Passenger* p = pLuggageQueue.top();
         pLuggageQueue.pop();
         return p;
     }
-    // first come firsts serve
+    // first come first serve
     if (luggageQueue.empty()) return nullptr;
 
     Passenger* p = luggageQueue.front();
@@ -146,14 +147,14 @@ Passenger* Airport::popLuggageQueue() {
 }
 
 Passenger* Airport::popSecurityQueue() {
-    if (features & FIRST_FLY_FIRST_SERVE) {
+    // first fly first serve
+    if (canCutInLine()) {
         if (pSecurityQueue.empty()) return nullptr;
 
         Passenger* p = pSecurityQueue.top();
         pSecurityQueue.pop();
         return p;
     }
-
     // first come first serve
     if (securityQueue.empty()) return nullptr;
 

@@ -69,11 +69,11 @@ void Passenger::reset() {
     this->timeLog = TimeLog();
 }
 
-void Passenger::skipLuggage() {
+void Passenger::skipLuggageControl() {
     this->skippedLuggage = true;
 }
 
-void Passenger::skipSecurity() {
+void Passenger::skipSecurityControl() {
     this->skippedSecurity = true;
 }
 

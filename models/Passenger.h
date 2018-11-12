@@ -42,9 +42,9 @@ public:
 
     void reset();
 
-    void skipLuggage();
+    void skipLuggageControl();
 
-    void skipSecurity();
+    void skipSecurityControl();
 
     unsigned long getWaitedTime();
 

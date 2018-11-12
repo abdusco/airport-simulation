@@ -46,7 +46,7 @@ private:
 
     void handleDeparture(Passenger& passenger);
 
-    void handleExit(Passenger& passenger);
+    void handleExited(Passenger& passenger);
 
     void processSecurityQueue();
 
@@ -59,11 +59,11 @@ private:
     Report prepareReport(PassengerList& passengers);
 
     bool canSkipLuggageControl(Passenger& passenger) {
-        return (features & ONLINE_TICKETING) && !passenger.hasLuggage;
+        return features & ONLINE_TICKETING && !passenger.hasLuggage;
     }
 
     bool canSkipSecurityControl(Passenger& passenger) {
-        return (features & VIP_SKIP_SECURITY) && passenger.isVip;
+        return features & VIP_SKIP_SECURITY && passenger.isVip;
     }
 
     bool canCutInLine() {
